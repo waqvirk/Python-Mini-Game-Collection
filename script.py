@@ -13,8 +13,8 @@ def number_guessing_game():
 print("Welcome to Rock Paper Scissors")
 def get_player_choice():
     choice = input("Enter rock, paper, or scissors: ").lower()
-    while choice not in ["rock", "paper", "scissors"]:
-        choice = input("Invalid choice! Please type rock, paper or scissors: ").lower()
+    while choice not in ["rock", "paper", "scissors", "x"]:
+        choice = input("Invalid choice! Please type rock, paper or scissors (x to quit): ").lower()
     return choice
 
 def get_computer_choice():
@@ -23,21 +23,46 @@ def get_computer_choice():
 
 def rock_paper_scissors(player, computer):
     if player == computer:
-        return "Draw!"
+        return "draw"
     elif (player == "rock" and computer == "scissors") or \
          (player == "scissors" and computer == "paper") or \
          (player == "paper" and computer == "rock"):
-        return "You win!"
+        return "player"
     else:
-        return "Computer wins!"
+        return "computer"
     
-# Lets Play
-player_move = get_player_choice()
-computer_move = get_computer_choice()
+# Initialize scores
+player_score = 0
+computer_score = 0
 
-print(f"\nYou chose: {player_move}")
-print(f"Computer chose: {computer_move}")
-print(rock_paper_scissors(player_move, computer_move))
+# Game loop
+while True:
+    player_move = get_player_choice()
+    if player_move == "x":
+        print("Exiting the game...")
+        break
+
+    computer_move = get_computer_choice()
+    print(f"\nYou chose: {player_move}")
+    print(f"Computer chose: {computer_move}")
+
+    winner = rock_paper_scissors(player_move, computer_move)
+
+    if winner == "player":
+        print("You win this round!")
+        player_score += 1
+    elif winner == "computer":
+        print("Computer wins this round!")
+        computer_score += 1
+    else:
+        print("it's a draw")
+
+    print(f"Score --> You: {player_score} | Computer: {computer_score}")
+    print("\n---\n")
+
+print("Game Over")
+    
+
 
 # TIC-TAC-TOE
 # Function to print the board
