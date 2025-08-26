@@ -10,10 +10,34 @@ def number_guessing_game():
 
 
 # PAPER, ROCK, SCISSORS
-def rock_paper_scissors():
-    pass
+print("Welcome to Rock Paper Scissors")
+def get_player_choice():
+    choice = input("Enter rock, paper, or scissors: ").lower()
+    while choice not in ["rock", "paper", "scissors"]:
+        choice = input("Invalid choice! Please type rock, paper or scissors: ").lower()
+    return choice
+
+def get_computer_choice():
+    return random.choice(["rock", "paper", "scissors"])
 
 
+def rock_paper_scissors(player, computer):
+    if player == computer:
+        return "Draw!"
+    elif (player == "rock" and computer == "scissors") or \
+         (player == "scissors" and computer == "paper") or \
+         (player == "paper" and computer == "rock"):
+        return "You win!"
+    else:
+        return "Computer wins!"
+    
+# Lets Play
+player_move = get_player_choice()
+computer_move = get_computer_choice()
+
+print(f"\nYou chose: {player_move}")
+print(f"Computer chose: {computer_move}")
+print(rock_paper_scissors(player_move, computer_move))
 
 # TIC-TAC-TOE
 # Function to print the board
@@ -35,54 +59,54 @@ def tic_tac_toe():
    
 
 # MENU SYSTEM
-def main_menu(if_set_game_on):
-    if if_set_game_on != 1:
-        print("")
-        print("ME: Going outside, touching grass :-)")
-        print("")
-        return
+# def main_menu(if_set_game_on):
+#     if if_set_game_on != 1:
+#         print("")
+#         print("ME: Going outside, touching grass :-)")
+#         print("")
+#         return
     
-    print("")
-    print("Welcome to Python-Mini-Game Collection !!!")
-    print("")
-    print("1. Number guessing game")
-    print("")
-    print("2. Rock- paper- scissors")
-    print("")
-    print("3. Tic- Tac- Toe")
-    print("")
-    print("4. Exit program")
-    print("")
-    menu_selection = input("Please choose a game by entering the number and pressing 'enter' - have fun!")
+#     print("")
+#     print("Welcome to Python-Mini-Game Collection !!!")
+#     print("")
+#     print("1. Number guessing game")
+#     print("")
+#     print("2. Rock- paper- scissors")
+#     print("")
+#     print("3. Tic- Tac- Toe")
+#     print("")
+#     print("4. Exit program")
+#     print("")
+#     menu_selection = input("Please choose a game by entering the number and pressing 'enter' - have fun!")
 
-    if menu_selection.isdigit() != True:        #If entered value is not a number, print warning + return to main menu
-        print("###################################")
-        print("You need to enter a number, please.")
-        print("###################################")
-        main_menu()
+#     if menu_selection.isdigit() != True:        #If entered value is not a number, print warning + return to main menu
+#         print("###################################")
+#         print("You need to enter a number, please.")
+#         print("###################################")
+#         main_menu()
     
     #game selection will call appropriate function to start the game:
-    if menu_selection == "1":
-        number_guessing_game()
-    elif menu_selection == "2":
-        rock_paper_scissors()
-    elif menu_selection == "3":
-        tic_tac_toe()
-    elif menu_selection == "4":
-        if_set_game_on = 0
-        print("")
-        print("AI says: Thank you for playing with us.")
-    else:
-        print("Unexpected problem occured, returning to main menu.")
+    # if menu_selection == "1":
+    #     number_guessing_game()
+    # elif menu_selection == "2":
+    #     rock_paper_scissors()
+    # elif menu_selection == "3":
+    #     tic_tac_toe()
+    # elif menu_selection == "4":
+    #     if_set_game_on = 0
+    #     print("")
+    #     print("AI says: Thank you for playing with us.")
+    # else:
+    #     print("Unexpected problem occured, returning to main menu.")
     
-    main_menu(if_set_game_on)
+    # main_menu(if_set_game_on)
 
     
     
 # RUN THE MENU
 
-if_set_game_on = 1
-main_menu(if_set_game_on)
+# if_set_game_on = 1
+# main_menu(if_set_game_on)
 
 
 
