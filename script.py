@@ -7,9 +7,57 @@ def number_guessing_game():
 
 
 # PAPER, ROCK, SCISSORS
-def rock_paper_scissors():
-    pass
+print("Welcome to Rock Paper Scissors")
+def get_player_choice():
+    choice = input("Enter rock, paper, or scissors: ").lower()
+    while choice not in ["rock", "paper", "scissors", "x"]:
+        choice = input("Invalid choice! Please type rock, paper or scissors (x to quit): ").lower()
+    return choice
 
+def get_computer_choice():
+    return random.choice(["rock", "paper", "scissors"])
+
+
+def rock_paper_scissors(player, computer):
+    if player == computer:
+        return "draw"
+    elif (player == "rock" and computer == "scissors") or \
+         (player == "scissors" and computer == "paper") or \
+         (player == "paper" and computer == "rock"):
+        return "player"
+    else:
+        return "computer"
+    
+# Initialize scores
+player_score = 0
+computer_score = 0
+
+# Game loop
+while True:
+    player_move = get_player_choice()
+    if player_move == "x":
+        print("Exiting the game...")
+        break
+
+    computer_move = get_computer_choice()
+    print(f"\nYou chose: {player_move}")
+    print(f"Computer chose: {computer_move}")
+
+    winner = rock_paper_scissors(player_move, computer_move)
+
+    if winner == "player":
+        print("You win this round!")
+        player_score += 1
+    elif winner == "computer":
+        print("Computer wins this round!")
+        computer_score += 1
+    else:
+        print("it's a draw")
+
+    print(f"Score --> You: {player_score} | Computer: {computer_score}")
+    print("\n---\n")
+
+print("Game over!")
 
 # TIC-TAC-TOE
 # Function to print the board
@@ -133,7 +181,5 @@ def main_menu(if_set_game_on):
 
     
 # RUN THE MENU
-
 if_set_game_on = 1          #used to run main menu, if 0 will pass through and exit
 main_menu(if_set_game_on)
-
