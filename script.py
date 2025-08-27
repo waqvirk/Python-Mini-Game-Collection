@@ -129,5 +129,5 @@ def main_menu(if_set_game_on):
     
 # RUN THE MENU
 
-# if_set_game_on = 1
-# main_menu(if_set_game_on)
+if_set_game_on = 1
+main_menu(if_set_game_on)
