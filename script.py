@@ -42,7 +42,6 @@ if __name__ == "__main__":
 
 
 # PAPER, ROCK, SCISSORS
-print("Welcome to Rock Paper Scissors")
 def get_player_choice():
     choice = input("Enter rock, paper, or scissors: ").lower()
     while choice not in ["rock", "paper", "scissors", "x"]:
@@ -64,35 +63,37 @@ def rock_paper_scissors(player, computer):
         return "computer"
     
 # Initialize scores
-player_score = 0
-computer_score = 0
+def play_rps():
+    print("Welcome to Rock Paper Scissors")
+    player_score = 0
+    computer_score = 0
 
 # Game loop
-while True:
-    player_move = get_player_choice()
-    if player_move == "x":
-        print("Exiting the game...")
-        break
+    while True:
+        player_move = get_player_choice()
+        if player_move == "x":
+            print("Exiting the game...")
+            break
 
-    computer_move = get_computer_choice()
-    print(f"\nYou chose: {player_move}")
-    print(f"Computer chose: {computer_move}")
+        computer_move = get_computer_choice()
+        print(f"\nYou chose: {player_move}")
+        print(f"Computer chose: {computer_move}")
 
-    winner = rock_paper_scissors(player_move, computer_move)
+        winner = rock_paper_scissors(player_move, computer_move)
 
-    if winner == "player":
-        print("You win this round!")
-        player_score += 1
-    elif winner == "computer":
-        print("Computer wins this round!")
-        computer_score += 1
-    else:
-        print("it's a draw")
+        if winner == "player":
+            print("You win this round!")
+            player_score += 1
+        elif winner == "computer":
+            print("Computer wins this round!")
+            computer_score += 1
+        else:
+            print("it's a draw")
 
-    print(f"Score --> You: {player_score} | Computer: {computer_score}")
-    print("\n---\n")
+        print(f"Score --> You: {player_score} | Computer: {computer_score}")
+        print("\n---\n")
 
-print("Game over!")
+    print("Game over!")
 
 # TIC-TAC-TOE
 # Function to print the board
@@ -202,7 +203,7 @@ def main_menu(if_set_game_on):
     if menu_selection == "1":
         number_guessing_game()
     elif menu_selection == "2":
-        rock_paper_scissors()
+        play_rps()
     elif menu_selection == "3":
         tic_tac_toe(stay_in_game=1)
     elif menu_selection == "4":
