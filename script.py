@@ -4,27 +4,33 @@
 import random
 
 def number_guessing_game():
-    number = random.randint(1, 10)  # Random 1 to 10
-    guess = None
-    attempts = 0
+    while True:                   # Outer loop so user can play again until quit
+        number = random.randint(1, 10)  # Random 1 to 10
+        guess = None
+        attempts = 0
 
-    print("Welcome to the Guessing Game!")
-    print("You have to guess a number between 1 to 10. Wanna try?!")
+        print("Welcome to the Guessing Game!")
+        print("You have to guess a number between 1 to 10. Wanna try?!")
+        print("Type 'x' to quit anytime")
 
-    # Solange geraten wird, wiederhole die Eingabe
-    while guess != number:
-        try:
-            guess = int(input("Guess the number: "))
-            attempts += 1
+        # Solange geraten wird, wiederhole die Eingabe
+        while guess != number:                   #Inner loop to keep guessing until correct
+            guess = input("Guess the number: ")
+            if guess.lower() == "x":
+                print("Exiting the game...")
+                return       #exit the whole function
+            try:
+                guess = int(guess)
+                attempts += 1
 
-            if guess < number:
-                print("Too low! Try again with a bigger number!")
-            elif guess > number:
-                print("Too high! Try again with a lower number!")
-            else:
-                print("="*55)
-                print(f"✅ Correct! You won in {attempts} tries.\n")
-                print(r"""
+                if guess < number:
+                    print("Too low! Try again with a bigger number!")
+                elif guess > number:
+                    print("Too high! Try again with a lower number!")
+                else:
+                    print("="*55)
+                    print(f"✅ Correct! You won in {attempts} tries.\n")
+                    print(r"""
  __     ______  _    _   __          _______ _   _ 
  \ \   / / __ \| |  | |  \ \        / /_   _| \ | |
   \ \_/ / |  | | |  | |   \ \  /\  / /  | | |  \| |
@@ -32,12 +38,11 @@ def number_guessing_game():
     | | | |__| | |__| |     \  /\  /   _| |_| |\  |
     |_|  \____/ \____/       \/  \/   |_____|_| \_|
 """)
-                print("="*55)
-        except ValueError:
-            print("Error: Inavild number, try again a full number between 1 - 10")
+                    print("="*55)
+                    break      #exit the inner loop (round won)
 
-if __name__ == "__main__":
-    guessing_game()
+            except ValueError:
+                print("❌ Invalid input! Please enter a number 1-10 (x to quit)")
 
 
 
@@ -45,7 +50,7 @@ if __name__ == "__main__":
 def get_player_choice():
     choice = input("Enter rock, paper, or scissors: ").lower()
     while choice not in ["rock", "paper", "scissors", "x"]:
-        choice = input("Invalid choice! Please type rock, paper or scissors (x to quit): ").lower()
+        choice = input("❌ Invalid choice! Please type rock, paper or scissors (x to quit): ").lower()
     return choice
 
 def get_computer_choice():
@@ -92,8 +97,6 @@ def play_rps():
 
         print(f"Score --> You: {player_score} | Computer: {computer_score}")
         print("\n---\n")
-
-    print("Game over!")
 
 # TIC-TAC-TOE
 # Function to print the board
@@ -218,7 +221,7 @@ def main_menu(if_set_game_on):
     print("")
     print("4. Exit program")
     print("")
-    menu_selection = input("Please choose a game by entering the number and pressing 'enter' - have fun!")
+    menu_selection = input("Please choose a game by entering the number and pressing 'enter' - have fun! ")
 
     if menu_selection.isdigit() != True:        #If entered value is not a number, print warning + return to main menu
         print("###################################")
