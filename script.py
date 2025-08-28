@@ -3,7 +3,7 @@
 # NUMBER GUESSING GAME
 import random
 
-def guessing_game():
+def number_guessing_game():
     number = random.randint(1, 10)  # Random 1 to 10
     guess = None
     attempts = 0
