@@ -129,7 +129,28 @@ def print_board(board):
 
 # Function to check the winner
 def check_winner(current_player, field_list):
-    pass
+    
+    symbol = "O" if current_player == "player2" else "X"
+    
+    winning_combinations = [
+        [1, 2, 3],       
+        [4, 5, 6],
+        [7, 8, 9],
+        [1, 4, 7],
+        [2, 5, 8],
+        [3, 6, 9],
+        [1, 5, 9],
+        [3, 5, 7],
+    ]
+
+    for a, b, c in winning_combinations:
+        if field_list[a] == field_list[b] == field_list[c] == symbol:
+            return current_player
+    
+    if all(cell != " " for cell in field_list[1:10]):
+        return "Draw"
+    
+    return None
 
 
 # Function to run fo the actual tic-tac-toe game where your other functions will be used
@@ -155,9 +176,9 @@ def tic_tac_toe(stay_in_game):
             try:
 
                 if current_player == "player1":
-                 player1_input = int(input("Player 1, you use 'X' - make your choice: "))
+                    player1_input = int(input("Player 1, you use 'X' - make your choice: "))
                     #check if variable INT or errors out on letters here later
-                 print_board(board=player1_input)
+                    print_board(board=player1_input)
                 elif current_player == "player2":
                     player2_input = int(input("Player 2, you use 'O' - make your choice: "))
                     #print(type(player2_input))
@@ -165,7 +186,13 @@ def tic_tac_toe(stay_in_game):
                 else:
                     print("Error detected, check program code.")
             
-                check_winner(current_player, field_list)
+                result = check_winner(current_player, field_list)
+                if result:
+                    if result == "Draw":
+                        print("it's a draw!")
+                    else:
+                        print (f"{result} wins!")
+                    break
             except:
                 ValueError
 
