@@ -99,6 +99,7 @@ def play_rps():
         print("\n---\n")
 
 # TIC-TAC-TOE
+
 # Function to print the board
 def print_board(board):
         if board == 0:   #pre-fill fields for first initial board draw, for player to understand
@@ -165,7 +166,7 @@ def tic_tac_toe(stay_in_game):
     print("To play you can type '6' for example for 2nd row and 3rd column when it's your turn.")
     print("Player no.1 begins and takes turns with player no.2. Player no.1 please begin.")    
     print("")
-    while stay_in_game == 1:
+    while True:
         print_board(board=0) #initial board draw filled numbers 1-9 to display
         print("")
         global field_list
@@ -198,6 +199,15 @@ def tic_tac_toe(stay_in_game):
                     break
             except:
                 ValueError
+        # --- Ask to play again or return to menu ---
+        choice = input("Play again? (y = yes, m = main menu): ").strip().lower()
+        if choice == "y":
+            continue
+        elif choice == "m":
+            return
+        else:
+            print("Invalid choice, returning to main menu.")
+            return
 
             #check_win_condition as 9 rounds of gameplay will lead here, set variable stay_in_game to 0 to exit or leave to replay
 
