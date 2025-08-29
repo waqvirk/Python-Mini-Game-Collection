@@ -1,36 +1,173 @@
-# Work off the platform in groups using the following code as a base
+# Number Game1
 
-# NUMBER GUESSING GAME
 import random
+import time
+import shutil
+
+# ====== Helpers ======
+
+def typewriter(text, delay=0.02):
+    """Print text with a typewriter effect (no newline)."""
+    for ch in text:
+        print(ch, end="", flush=True)
+        time.sleep(delay)
+    # no auto-newline so caller controls line breaks
+
+def draw_banner():
+    title = "NUMBER GUESSING ARENA"
+    w = max(len(title) + 12, 42)
+    top = "╔" + "═" * (w - 2) + "╗"
+    sep = "╠" + "═" * (w - 2) + "╣"
+    bot = "╚" + "═" * (w - 2) + "╝"
+    line = "║" + " " * (w - 2) + "║"
+    print(top)
+    print(line)
+    center = f"███   {title}   ███"
+    print("║" + center.center(w - 2) + "║")
+    print(line)
+    print(sep)
+    msg1 = "Guess a number between 1–100."
+    msg2 = "Type 'x' to quit anytime."
+    print("║" + msg1.ljust(w - 2) + "║")
+    print("║" + msg2.ljust(w - 2) + "║")
+    print(bot)
+
+def loading_sequence(steps=10):
+    """Intro loading: typewriter header + 10-step progress bar."""
+    typewriter("Initializing range ", 0.018)
+    typewriter("1–100", 0.03)
+    print()
+    typewriter("Loading game assets", 0.018)
+    print()
+    bar_w = 30
+    for i in range(steps):
+        filled = int(bar_w * (i + 1) / steps)
+        bar = "[" + "#" * filled + "-" * (bar_w - filled) + "]"
+        print(f"{bar} {int((i+1)/steps*100)}%", end="\r", flush=True)
+        time.sleep(0.08)
+    print()  # finish the line
+    print()
+
+def clamp_guess(g, lo, hi):
+    if g < lo:
+        return lo
+    if g > hi:
+        return hi
+    return g
+
+def draw_ruler(lo, hi, last=None, global_lo=1, global_hi=100, width=40):
+    """
+    Draw a ruler showing current valid range within the global 1..100.
+    Marks last guess with '^' (if given).
+    """
+    width = max(20, width)
+    span = global_hi - global_lo
+    def pos(val):
+        if span == 0:
+            return 0
+        return int((val - global_lo) / span * (width - 1))
+
+    lo_i = pos(lo)
+    hi_i = pos(hi)
+    line = ["·"] * width  # faint baseline
+    # highlight current valid segment
+    for i in range(lo_i, hi_i + 1):
+        line[i] = "—"
+    # mark ends
+    line[lo_i] = "|"
+    line[hi_i] = "|"
+    # mark last guess
+    pointer_line = [" "] * width
+    label = ""
+    if last is not None and global_lo <= last <= global_hi:
+        li = pos(last)
+        pointer_line[li] = "^"
+        label = f" last: {last}"
+
+    print(f"Range: [{global_lo}" + "".join(line) + f"{global_hi}]")
+    print("       " + "".join(pointer_line) + label)
+
+def print_history(history):
+    """
+    history: list of dicts with keys: try, guess, result
+    """
+    if not history:
+        return
+    # dynamic width based on content
+    try_w = max(3, len("Try"))
+    guess_w = max(5, len("Guess"))
+    result_w = max(6, max(len(h["result"]) for h in history))
+    # headers
+    print("┌" + "─"*(try_w+2) + "┬" + "─"*(guess_w+2) + "┬" + "─"*(result_w+2) + "┐")
+    print("│ " + "Try".ljust(try_w) + " │ " + "Guess".ljust(guess_w) + " │ " + "Result".ljust(result_w) + " │")
+    print("├" + "─"*(try_w+2) + "┼" + "─"*(guess_w+2) + "┼" + "─"*(result_w+2) + "┤")
+    for h in history:
+        print("│ " + str(h["try"]).ljust(try_w) + " │ " + str(h["guess"]).ljust(guess_w) + " │ " + h["result"].ljust(result_w) + " │")
+    print("└" + "─"*(try_w+2) + "┴" + "─"*(guess_w+2) + "┴" + "─"*(result_w+2) + "┘")
+
+def terminal_width():
+    try:
+        return shutil.get_terminal_size(fallback=(80, 20)).columns
+    except Exception:
+        return 80
+
+# ====== Game ======
 
 def number_guessing_game():
-    while True:                   # Outer loop so user can play again until quit
-        number = random.randint(1, 10)  # Random 1 to 10
+    GLOBAL_LO, GLOBAL_HI = 1, 100
+
+    while True:  # replay loop
+        number = random.randint(GLOBAL_LO, GLOBAL_HI)
+        lo, hi = GLOBAL_LO, GLOBAL_HI
         guess = None
         attempts = 0
+        history = []
 
-        print("Welcome to the Guessing Game!")
-        print("You have to guess a number between 1 to 10. Wanna try?!")
-        print("Type 'x' to quit anytime")
+        print()
+        draw_banner()
+        loading_sequence(steps=10)
 
-        # Solange geraten wird, wiederhole die Eingabe
-        while guess != number:                   #Inner loop to keep guessing until correct
-            guess = input("Guess the number: ")
-            if guess.lower() == "x":
-                print("Exiting the game...")
-                return       #exit the whole function
+        print("Make your guess! (enter a number 1–100, or 'x' to quit)\n")
+
+        # guessing loop
+        while guess != number:
+            # show ruler before each guess
+            draw_ruler(lo, hi, last=guess, global_lo=GLOBAL_LO, global_hi=GLOBAL_HI, width=min(60, terminal_width()-20))
+            if history:
+                print_history(history)
+            user_in = input("\nGuess: ").strip()
+            if user_in.lower() == "x":
+                print("\nExiting the game...")
+                return
+
             try:
-                guess = int(guess)
-                attempts += 1
+                guess = int(user_in)
+            except ValueError:
+                print("❌ Invalid input! Please enter a number 1–100 (or x to quit).")
+                continue
 
-                if guess < number:
-                    print("Too low! Try again with a bigger number!")
-                elif guess > number:
-                    print("Too high! Try again with a lower number!")
-                else:
-                    print("="*55)
-                    print(f"✅ Correct! You won in {attempts} tries.\n")
-                    print(r"""
+            if not (GLOBAL_LO <= guess <= GLOBAL_HI):
+                print("⚠️  Out of bounds. Stay within 1–100.")
+                continue
+
+            attempts += 1
+
+            if guess < number:
+                result = "low"
+                history.append({"try": attempts, "guess": guess, "result": result})
+                lo = max(lo, guess + 1)
+                print("Too low! Try again with a bigger number!")
+            elif guess > number:
+                result = "high"
+                history.append({"try": attempts, "guess": guess, "result": result})
+                hi = min(hi, guess - 1)
+                print("Too high! Try again with a lower number!")
+            else:
+                result = "correct"
+                history.append({"try": attempts, "guess": guess, "result": result})
+                print("\n" + "=" * 60)
+                print(f"✅ Correct! You won in {attempts} tries.\n")
+                print(r"""
  __     ______  _    _   __          _______ _   _ 
  \ \   / / __ \| |  | |  \ \        / /_   _| \ | |
   \ \_/ / |  | | |  | |   \ \  /\  / /  | | |  \| |
@@ -38,12 +175,15 @@ def number_guessing_game():
     | | | |__| | |__| |     \  /\  /   _| |_| |\  |
     |_|  \____/ \____/       \/  \/   |_____|_| \_|
 """)
-                    print("="*55)
-                    break      #exit the inner loop (round won)
+                print("=" * 60)
+                print_history(history)
+                break
 
-            except ValueError:
-                print("❌ Invalid input! Please enter a number 1-10 (x to quit)")
-
+        # replay?
+        again = input("\nPlay again? (y/n): ").strip().lower()
+        if again != "y":
+            print("Thanks for playing! 👋")
+            return
 
 
 # PAPER, ROCK, SCISSORS
