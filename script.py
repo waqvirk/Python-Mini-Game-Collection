@@ -190,9 +190,9 @@ def number_guessing_game():
 
 # PAPER, ROCK, SCISSORS
 def get_player_choice():
-    choice = input("Enter rock, paper, or scissors: ").lower()
+    choice = input(Fore.LIGHTWHITE_EX + "Enter rock, paper, or scissors: ").lower()
     while choice not in ["rock", "paper", "scissors", "x"]:
-        choice = input("❌ Invalid choice! Please type rock, paper or scissors (x to quit): ").lower()
+        choice = input(Fore.LIGHTRED_EX + "❌ Invalid choice! Please type rock, paper or scissors (x to quit): ").lower()
     return choice
 
 def get_computer_choice():
@@ -211,7 +211,8 @@ def rock_paper_scissors(player, computer):
     
 # Initialize scores
 def play_rps():
-    print("Welcome to Rock Paper Scissors")
+    print(Fore.LIGHTYELLOW_EX + "Welcome to Rock Paper Scissors ✊✋✌️")
+    print(Fore.LIGHTRED_EX + "Type 'x' to quit anytime")
     player_score = 0
     computer_score = 0
 
@@ -219,26 +220,26 @@ def play_rps():
     while True:
         player_move = get_player_choice()
         if player_move == "x":
-            print("Exiting the game...")
+            print(Fore.LIGHTBLUE_EX + "Exiting the game...")
             break
 
         computer_move = get_computer_choice()
-        print(f"\nYou chose: {player_move}")
-        print(f"Computer chose: {computer_move}")
+        print(Fore.LIGHTBLUE_EX + f"\n👤 You chose: {player_move}")
+        print(Fore.LIGHTCYAN_EX + f"🤖 Computer chose: {computer_move}")
 
         winner = rock_paper_scissors(player_move, computer_move)
 
         if winner == "player":
-            print("You win this round!")
+            print(Fore.LIGHTGREEN_EX + Style.BRIGHT + "👤 You win this round!")
             player_score += 1
         elif winner == "computer":
-            print("Computer wins this round!")
+            print(Fore.LIGHTRED_EX + Style.BRIGHT + "🤖 Computer wins this round!")
             computer_score += 1
         else:
-            print("it's a draw")
+            print(Fore.LIGHTYELLOW_EX + Style.BRIGHT + "🤝 It's a draw")
 
-        print(f"Score --> You: {player_score} | Computer: {computer_score}")
-        print("\n---\n")
+        print(Fore.LIGHTWHITE_EX + Style.BRIGHT + f"🎮 Score --> 👤 : {player_score} | 🤖 : {computer_score}")
+        print(Fore.LIGHTBLUE_EX + "\n---\n")
 
 # TIC-TAC-TOE
 
