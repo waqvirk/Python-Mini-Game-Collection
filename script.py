@@ -3,6 +3,8 @@
 import random
 import time
 import shutil
+from colorama import Fore, Back, Style, init
+init(autoreset=True)
 
 # ====== Helpers ======
 
@@ -302,9 +304,9 @@ def tic_tac_toe(stay_in_game):
     if stay_in_game != 1:
         return
     print("")
-    print("3. Tic- Tac- Toe")
-    print("To play you can type '6' for example for 2nd row and 3rd column when it's your turn.")
-    print("Player no.1 begins and takes turns with player no.2. Player no.1 please begin.")    
+    print(Fore.LIGHTGREEN_EX + "3. Tic- Tac- Toe")
+    print(Fore.LIGHTGREEN_EX + "To play you can type '6' for example for 2nd row and 3rd column when it's your turn.")
+    print(Fore.LIGHTGREEN_EX + "Player no.1 begins and takes turns with player no.2. Player no.1 please begin.")    
     print("")
     while True:
         print_board(board=0) #initial board draw filled numbers 1-9 to display
@@ -316,15 +318,15 @@ def tic_tac_toe(stay_in_game):
             #end range should be increase for proper gameplay,   check 9 fields + 3 rows for end/winning conditions
             global current_player
             current_player = "player2" if i %2 == 0 else "player1"
-            print(f"It's the turn of: {current_player} - choose a field (1-9).")
+            print(Fore.LIGHTGREEN_EX + f"It's the turn of: {current_player} - choose a field (1-9).")
             try:
 
                 if current_player == "player1":
-                    player1_input = int(input("Player 1, you use 'X' - make your choice: "))
+                    player1_input = int(input(Fore.LIGHTRED_EX + "Player 1, you use 'X' - make your choice: "))
                     #check if variable INT or errors out on letters here later
                     print_board(board=player1_input)
                 elif current_player == "player2":
-                    player2_input = int(input("Player 2, you use 'O' - make your choice: "))
+                    player2_input = int(input(Fore.LIGHTCYAN_EX + "Player 2, you use 'O' - make your choice: "))
                     #print(type(player2_input))
                     print_board(board=player2_input)
                 else:
@@ -333,20 +335,20 @@ def tic_tac_toe(stay_in_game):
                 result = check_winner(current_player, field_list)
                 if result:
                     if result == "Draw":
-                        print("it's a draw!")
+                        print(Fore.LIGHTGREEN_EX + "it's a draw!")
                     else:
-                        print (f"{result} wins!")
+                        print (Fore.LIGHTGREEN_EX + f"{result} wins!")
                     break
             except:
                 ValueError
         # --- Ask to play again or return to menu ---
-        choice = input("Play again? (y = yes, m = main menu): ").strip().lower()
+        choice = input(Fore.LIGHTGREEN_EX + "Play again? (y = yes, m = main menu): ").strip().lower()
         if choice == "y":
             continue
         elif choice == "m":
             return
         else:
-            print("Invalid choice, returning to main menu.")
+            print(Fore.LIGHTGREEN_EX + "Invalid choice, returning to main menu.")
             return
 
             #check_win_condition as 9 rounds of gameplay will lead here, set variable stay_in_game to 0 to exit or leave to replay
@@ -356,27 +358,29 @@ def tic_tac_toe(stay_in_game):
 def main_menu(if_set_game_on):
     if if_set_game_on != 1:
         print("")
-        print("ME: Going outside, touching grass :-)")
+        print(Fore.LIGHTGREEN_EX + "ME: Going outside, touching grass :-)")
         print("")
         return
     
     print("")
-    print("Welcome to Python-Mini-Game Collection !!!")
     print("")
-    print("1. Number guessing game")
     print("")
-    print("2. Rock- paper- scissors")
+    print(Fore.LIGHTWHITE_EX + "Welcome to Python-Mini-Game Collection !!!")
     print("")
-    print("3. Tic- Tac- Toe")
+    print(Fore.LIGHTMAGENTA_EX + "1. Number guessing game")
     print("")
-    print("4. Exit program")
+    print(Fore.LIGHTYELLOW_EX + "2. Rock- paper- scissors")
     print("")
-    menu_selection = input("Please choose a game by entering the number and pressing 'enter' - have fun! ")
+    print(Fore.LIGHTGREEN_EX + "3. Tic- Tac- Toe")
+    print("")
+    print(Fore.LIGHTCYAN_EX + "4. Exit program")
+    print("")
+    menu_selection = input(Fore.LIGHTWHITE_EX + "Please choose a game by entering the number and pressing 'enter' - have fun! ")
 
     if menu_selection.isdigit() != True:        #If entered value is not a number, print warning + return to main menu
-        print("###################################")
-        print("You need to enter a number, please.")
-        print("###################################")
+        print(Fore.LIGHTWHITE_EX + "###################################")
+        print(Fore.LIGHTWHITE_EX + "You need to enter a number, please.")
+        print(Fore.LIGHTWHITE_EX + "###################################")
         main_menu()
     
     #game selection will call appropriate function to start the game:
@@ -389,9 +393,9 @@ def main_menu(if_set_game_on):
     elif menu_selection == "4":
         if_set_game_on = 0
         print("")
-        print("AI says: Thank you for playing with us.")
+        print(Fore.LIGHTYELLOW_EX + "AI says: Thank you for playing with us.")
     else:
-        print("Unexpected problem occured, returning to main menu.")
+        print(Fore.LIGHTWHITE_EX + "Unexpected problem occured, returning to main menu.")
     
     main_menu(if_set_game_on)
 
