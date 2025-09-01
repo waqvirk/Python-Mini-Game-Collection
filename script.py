@@ -1,19 +1,42 @@
+# --- Optional color support ---
+
+try:
+    from colorama import Fore, Back, Style, init as colorama_init
+    colorama_init(autoreset=True)
+    COLOR_ENABLED = True
+except Exception:
+    # colorama not installed → define no-op stand-ins
+    COLOR_ENABLED = False
+    class _NoColor:
+        def __getattr__(self, _):  # Fore.LIGHTMAGENTA_EX → ""
+            return ""
+    Fore = Back = Style = _NoColor()
+    def colorama_init(*args, **kwargs):  # keep API shape if you call it elsewhere
+        pass
+
+
 # Number Game1
 
 import random
 import time
 import shutil
-from colorama import Fore, Back, Style, init
-init(autoreset=True)
+
+# Number game colors
+P      = Fore.LIGHTMAGENTA_EX + Style.BRIGHT
+P_DIM  = Fore.LIGHTMAGENTA_EX
+OK     = Fore.LIGHTGREEN_EX + Style.BRIGHT
+WARN   = Fore.LIGHTYELLOW_EX + Style.BRIGHT
+ERR    = Fore.LIGHTRED_EX + Style.BRIGHT
+INFO   = Fore.LIGHTCYAN_EX
+TEXT   = Fore.LIGHTWHITE_EX
 
 # ====== Helpers ======
-
 def typewriter(text, delay=0.02):
     """Print text with a typewriter effect (no newline)."""
     for ch in text:
         print(ch, end="", flush=True)
         time.sleep(delay)
-    # no auto-newline so caller controls line breaks
+    # caller controls newline
 
 def draw_banner():
     title = "NUMBER GUESSING ARENA"
@@ -22,32 +45,34 @@ def draw_banner():
     sep = "╠" + "═" * (w - 2) + "╣"
     bot = "╚" + "═" * (w - 2) + "╝"
     line = "║" + " " * (w - 2) + "║"
-    print(top)
-    print(line)
+
+    print(P + top)
+    print(P + line)
     center = f"███   {title}   ███"
-    print("║" + center.center(w - 2) + "║")
-    print(line)
-    print(sep)
+    print(P + "║" + center.center(w - 2) + "║")
+    print(P + line)
+    print(P + sep)
     msg1 = "Guess a number between 1–100."
     msg2 = "Type 'x' to quit anytime."
-    print("║" + msg1.ljust(w - 2) + "║")
-    print("║" + msg2.ljust(w - 2) + "║")
-    print(bot)
+    print(P + "║" + msg1.ljust(w - 2) + "║")
+    print(P + "║" + msg2.ljust(w - 2) + "║")
+    print(P + bot)
 
 def loading_sequence(steps=10):
-    """Intro loading: typewriter header + 10-step progress bar."""
-    typewriter("Initializing range ", 0.018)
-    typewriter("1–100", 0.03)
+    """Intro loading: typewriter header + 10-step progress bar (magenta)."""
+    typewriter(P + "Initializing range ", 0.018)
+    typewriter(P + "1–100", 0.03)
     print()
-    typewriter("Loading game assets", 0.018)
+    typewriter(P + "Loading game assets", 0.018)
     print()
     bar_w = 30
     for i in range(steps):
         filled = int(bar_w * (i + 1) / steps)
-        bar = "[" + "#" * filled + "-" * (bar_w - filled) + "]"
-        print(f"{bar} {int((i+1)/steps*100)}%", end="\r", flush=True)
+        bar = P + "[" + "#" * filled + "-" * (bar_w - filled) + "]"
+        pct = int((i + 1) / steps * 100)
+        print(f"{bar} {pct}%", end="\r", flush=True)
         time.sleep(0.08)
-    print()  # finish the line
+    print()
     print()
 
 def clamp_guess(g, lo, hi):
@@ -64,6 +89,7 @@ def draw_ruler(lo, hi, last=None, global_lo=1, global_hi=100, width=40):
     """
     width = max(20, width)
     span = global_hi - global_lo
+
     def pos(val):
         if span == 0:
             return 0
@@ -72,22 +98,20 @@ def draw_ruler(lo, hi, last=None, global_lo=1, global_hi=100, width=40):
     lo_i = pos(lo)
     hi_i = pos(hi)
     line = ["·"] * width  # faint baseline
-    # highlight current valid segment
     for i in range(lo_i, hi_i + 1):
         line[i] = "—"
-    # mark ends
     line[lo_i] = "|"
     line[hi_i] = "|"
-    # mark last guess
+
     pointer_line = [" "] * width
     label = ""
     if last is not None and global_lo <= last <= global_hi:
         li = pos(last)
         pointer_line[li] = "^"
-        label = f" last: {last}"
+        label = f"  last: {last}"
 
-    print(f"Range: [{global_lo}" + "".join(line) + f"{global_hi}]")
-    print("       " + "".join(pointer_line) + label)
+    print(P + f"Range: [{global_lo}" + "".join(line) + f"{global_hi}]")
+    print(P + "       " + "".join(pointer_line) + (TEXT + label if label else ""))
 
 def print_history(history):
     """
@@ -95,24 +119,32 @@ def print_history(history):
     """
     if not history:
         return
-    # dynamic width based on content
     try_w = max(3, len("Try"))
     guess_w = max(5, len("Guess"))
     result_w = max(6, max(len(h["result"]) for h in history))
-    # headers
-    print("┌" + "─"*(try_w+2) + "┬" + "─"*(guess_w+2) + "┬" + "─"*(result_w+2) + "┐")
-    print("│ " + "Try".ljust(try_w) + " │ " + "Guess".ljust(guess_w) + " │ " + "Result".ljust(result_w) + " │")
-    print("├" + "─"*(try_w+2) + "┼" + "─"*(guess_w+2) + "┼" + "─"*(result_w+2) + "┤")
+
+    print(P + "┌" + "─"*(try_w+2) + "┬" + "─"*(guess_w+2) + "┬" + "─"*(result_w+2) + "┐")
+    print(P + "│ " + "Try".ljust(try_w) + " │ " + "Guess".ljust(guess_w) + " │ " + "Result".ljust(result_w) + " │")
+    print(P + "├" + "─"*(try_w+2) + "┼" + "─"*(guess_w+2) + "┼" + "─"*(result_w+2) + "┤")
     for h in history:
-        print("│ " + str(h["try"]).ljust(try_w) + " │ " + str(h["guess"]).ljust(guess_w) + " │ " + h["result"].ljust(result_w) + " │")
-    print("└" + "─"*(try_w+2) + "┴" + "─"*(guess_w+2) + "┴" + "─"*(result_w+2) + "┘")
+        res = h["result"]
+        if   res == "correct": color = OK
+        elif res == "high":    color = WARN
+        elif res == "low":     color = INFO
+        else:                  color = TEXT
+        print(
+            P + "│ " + str(h["try"]).ljust(try_w) +
+            " │ " + str(h["guess"]).ljust(guess_w) +
+            " │ " + color + res.ljust(result_w) + P + " │"
+        )
+    print(P + "└" + "─"*(try_w+2) + "┴" + "─"*(guess_w+2) + "┴" + "─"*(result_w+2) + "┘")
 
 def terminal_width():
     try:
         return shutil.get_terminal_size(fallback=(80, 20)).columns
     except Exception:
         return 80
-
+    
 # ====== Game ======
 
 def number_guessing_game():
@@ -129,7 +161,7 @@ def number_guessing_game():
         draw_banner()
         loading_sequence(steps=10)
 
-        print("Make your guess! (enter a number 1–100, or 'x' to quit)\n")
+        print(P + "Make your guess! (enter a number 1–100, or 'x' to quit)\n")
 
         # guessing loop
         while guess != number:
@@ -145,11 +177,11 @@ def number_guessing_game():
             try:
                 guess = int(user_in)
             except ValueError:
-                print("❌ Invalid input! Please enter a number 1–100 (or x to quit).")
+                print(ERR + "❌ Invalid input! Please enter a number 1–100 (or x to quit).")
                 continue
 
             if not (GLOBAL_LO <= guess <= GLOBAL_HI):
-                print("⚠️  Out of bounds. Stay within 1–100.")
+                print(WARN + "⚠️  Out of bounds. Stay within 1–100.")
                 continue
 
             attempts += 1
@@ -158,16 +190,16 @@ def number_guessing_game():
                 result = "low"
                 history.append({"try": attempts, "guess": guess, "result": result})
                 lo = max(lo, guess + 1)
-                print("Too low! Try again with a bigger number!")
+                print(INFO + "Too low! Try again with a bigger number!")
             elif guess > number:
                 result = "high"
                 history.append({"try": attempts, "guess": guess, "result": result})
                 hi = min(hi, guess - 1)
-                print("Too high! Try again with a lower number!")
+                print(INFO + "Too high! Try again with a lower number!")
             else:
                 result = "correct"
                 history.append({"try": attempts, "guess": guess, "result": result})
-                print("\n" + "=" * 60)
+                print("\n" + P + "=" * 60)
                 print(f"✅ Correct! You won in {attempts} tries.\n")
                 print(r"""
  __     ______  _    _   __          _______ _   _ 
@@ -177,7 +209,7 @@ def number_guessing_game():
     | | | |__| | |__| |     \  /\  /   _| |_| |\  |
     |_|  \____/ \____/       \/  \/   |_____|_| \_|
 """)
-                print("=" * 60)
+                print(P + "=" * 60)
                 print_history(history)
                 break
 
@@ -382,7 +414,7 @@ def main_menu(if_set_game_on):
         print(Fore.LIGHTWHITE_EX + "###################################")
         print(Fore.LIGHTWHITE_EX + "You need to enter a number, please.")
         print(Fore.LIGHTWHITE_EX + "###################################")
-        main_menu()
+        main_menu(if_set_game_on)
     
     #game selection will call appropriate function to start the game:
     if menu_selection == "1":
@@ -394,7 +426,44 @@ def main_menu(if_set_game_on):
     elif menu_selection == "4":
         if_set_game_on = 0
         print("")
-        print(Fore.LIGHTYELLOW_EX + "AI says: Thank you for playing with us.")
+        print(
+    Fore.LIGHTYELLOW_EX + r"""
+                          \   |   /
+                            .-*-.
+                         ‒ (  ☀  ) ‒
+                            `-*-'
+                          /   |   \ 
+""" +
+    Fore.GREEN + r"""
+            /\          /\                    /\          /\
+           /  \        /  \                  /  \        /  \
+          /^^^^\      /^^^^\                /^^^^\      /^^^^\
+     ____/^^^^^^\____/^^^^^^\______________/^^^^^^\____/^^^^^^\____
+    /                                                              \ 
+""" +
+    Fore.MAGENTA + 
+r"""   |   ✿  ✿        ~ ~ ~  ~  ~   ~ ~ ~   ~  ~  ~ ~ ~        ✿  ✿   |
+   |   ✿       ~  ~   ~ ~   ~ ~ ~ ~ ~ ~ ~ ~ ~   ~   ~            ✿  | 
+""" +
+    Fore.LIGHTYELLOW_EX +
+r"""   |                                                              |
+   |  ╔══════════════════════════════════════════════════════════╗ |
+   |  ║  AI says: Thank you for playing with us.                 ║ |
+   |  ╚══════════════════════════════════════════════════════════╝ |
+   |                                                              |
+""" +
+    Fore.MAGENTA +
+r"""   |   ✿       ~  ~   ~ ~   ~ ~ ~ ~ ~ ~ ~ ~ ~   ~   ~        ✿     |
+   |   ✿  ✿        ~ ~ ~  ~  ~   ~ ~ ~   ~  ~  ~ ~ ~     ✿  ✿      |
+""" +
+    Fore.GREEN +
+r"""    \______________________________________________________________/
+           \^^^^/      \^^^^/                \^^^^/      \^^^^/
+            \__/        \__/                  \__/        \__/
+"""
+)
+
+        return   # <-- Mini-Fix: jetzt beendet sich das Programm wirklich
     else:
         print(Fore.LIGHTWHITE_EX + "Unexpected problem occured, returning to main menu.")
     
