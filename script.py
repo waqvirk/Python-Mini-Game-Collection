@@ -3,8 +3,8 @@
 import random
 import time
 import shutil
-from colorama import Fore
-from colorama import init as colorama_init
+from colorama import Fore, Back, Style, init
+init(autoreset=True)
 
 # ====== Helpers ======
 
@@ -369,11 +369,11 @@ def main_menu(if_set_game_on):
     print("")
     print(Fore.LIGHTMAGENTA_EX + "1. Number guessing game")
     print("")
-    print(Fore.LIGHTCYAN_EX + "2. Rock- paper- scissors")
+    print(Fore.LIGHTYELLOW_EX + "2. Rock- paper- scissors")
     print("")
     print(Fore.LIGHTGREEN_EX + "3. Tic- Tac- Toe")
     print("")
-    print(Fore.LIGHTYELLOW_EX + "4. Exit program")
+    print(Fore.LIGHTCYAN_EX + "4. Exit program")
     print("")
     menu_selection = input(Fore.LIGHTWHITE_EX + "Please choose a game by entering the number and pressing 'enter' - have fun! ")
 
